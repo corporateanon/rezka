@@ -5,6 +5,7 @@ async function main() {
     const client = new HdrezkaClient();
     const res = await client.getMediaByReference({
         type: 'ReferenceUrl',
+        // url: 'https://rezka.ag/series/action/11565-mesto-vstrechi-izmenit-nelzya.html',
         url: 'https://rezka.ag/series/fiction/1745-doktor-kto-2005.html',
     });
     if (res?.type !== 'folder') {

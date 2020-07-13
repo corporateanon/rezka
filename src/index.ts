@@ -15,6 +15,7 @@ import {
     ReferenceSeriesFolder,
     Reference,
     ReferenceUrl,
+    ReferenceEpisode,
 } from './types';
 import { parseStreamMap } from './utils';
 import { basename } from 'path';
@@ -137,6 +138,7 @@ export class HdrezkaClient {
             const { data: html } = await this.http.get(reference.url);
             const streamUrl = this.parseStreamUrlFromInlineScriptTag(html);
             const translatorsList = this.parseTranslatorsListFromHtml(html);
+            const episodesList = this.parseEpisodesFromHtml(html);
 
             if (translatorsList.length) {
                 const items = translatorsList.map(
@@ -156,6 +158,8 @@ export class HdrezkaClient {
                     children: items,
                 };
                 return mediaFolder;
+            } else if (episodesList.length) {
+                return this.getMediaFolderFromEpisodesList(episodesList);
             }
 
             if (streamUrl) {
@@ -171,11 +175,35 @@ export class HdrezkaClient {
         if (reference.type === 'ReferenceSeriesFolder') {
             const { id, translatorId } = reference;
             const episodes = await this.getEpisodesList(id, translatorId);
-            debugger;
+            if (episodes.length) {
+                return this.getMediaFolderFromEpisodesList(episodes);
+            }
             return null;
         }
         return null;
     }
+
+    protected getMediaFolderFromEpisodesList(episodes: Episode[]): MediaFolder {
+        const episodeReferences = episodes.map((episode) => {
+            const ref: ReferenceEpisode = {
+                type: 'ReferenceEpisode',
+                episode,
+            };
+            const mediaRef: MediaReference<ReferenceEpisode> = {
+                type: 'reference',
+                ref,
+                title: episode.title,
+            };
+            return mediaRef;
+        });
+        const folder: MediaFolder = {
+            type: 'folder',
+            children: episodeReferences,
+            title: '',
+        };
+        return folder;
+    }
+
     protected async getEpisodesList(
         id: string,
         translatorId: string
