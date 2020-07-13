@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "example:search",
+            "skipFiles": ["<node_internals>/**"],
+            "program": "${workspaceFolder}/src/examples/search.ts",
+            "outFiles": ["${workspaceFolder}/**/*.js"],
+            "preLaunchTask": "npm: build",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "example:getSingleStream",
+            "skipFiles": ["<node_internals>/**"],
+            "program": "${workspaceFolder}/src/examples/getSingleStream.ts",
+            "outFiles": ["${workspaceFolder}/**/*.js"],
+            "preLaunchTask": "npm: build",
+            "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "example:getTranslatorsList",
+            "skipFiles": ["<node_internals>/**"],
+            "program": "${workspaceFolder}/src/examples/getTranslatorsList.ts",
+            "outFiles": ["${workspaceFolder}/**/*.js"],
+            "preLaunchTask": "npm: build",
+            "console": "integratedTerminal"
+        }
+    ]
+}

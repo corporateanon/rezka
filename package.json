@@ -1,0 +1,33 @@
+{
+  "name": "babel-typescript-sample",
+  "version": "0.7.2",
+  "license": "MIT",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "type-check:watch": "npm run type-check -- --watch",
+    "build": "npm run build:types && npm run build:js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline",
+    "example:search": "npm run build && node lib/examples/search",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/cheerio": "^0.22.18",
+    "@types/jest": "^25.2.3",
+    "core-js": "3",
+    "jest": "^26.0.1",
+    "prettier": "^2.0.5",
+    "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "acorn": "^7.2.0",
+    "acorn-walk": "^7.1.1",
+    "axios": "^0.19.2",
+    "cheerio": "^1.0.0-rc.3"
+  }
+}
