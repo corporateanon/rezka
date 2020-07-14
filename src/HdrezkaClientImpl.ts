@@ -1,29 +1,26 @@
-import { stringify as querystringStringify } from 'querystring';
 import { Node, parse as parseJS } from 'acorn';
 import { simple as walkSimple } from 'acorn-walk';
 import Axios, { AxiosInstance } from 'axios';
 import cheerio from 'cheerio';
+import { basename } from 'path';
+import { stringify as querystringStringify } from 'querystring';
 import { parse as parseUrl } from 'url';
+import { HdrezkaClient } from './HdrezkaClient';
 import {
-    ReferenceSearchResult,
+    Episode,
+    Media,
     MediaFolder,
-    MediaStream,
+    MediaReference,
     MediaStreamMap,
+    Reference,
+    ReferenceEpisode,
+    ReferenceSearchResult,
     SearchResult,
     Translator,
-    Episode,
-    MediaReference,
-    ReferenceTranslator,
-    Reference,
-    ReferenceUrl,
-    ReferenceEpisode,
-    StreamMap,
-    Media,
 } from './types';
 import { parseStreamMap } from './utils';
-import { basename } from 'path';
 
-export class HdrezkaClient {
+export class HdrezkaClientImpl implements HdrezkaClient {
     protected http: AxiosInstance;
 
     constructor() {
@@ -81,6 +78,72 @@ export class HdrezkaClient {
             children: items,
             title: '',
         };
+    }
+
+    async getMediaByReference(reference: Reference): Promise<Media | null> {
+        if (reference.type === 'ReferenceSearchResult') {
+            const id = this.getIdFromUrl(reference.searchResult.url);
+            if (!id) {
+                return null;
+            }
+
+            const { data: html } = await this.http.get(
+                reference.searchResult.url
+            );
+            const streamUrl = this.parseStreamUrlFromInlineScriptTag(html);
+            const translatorsList = this.parseTranslatorsListFromHtml(html);
+            const episodesList = this.parseEpisodesFromHtml(html, { id });
+
+            // Multiple translators are suggested.
+            // A folder of references to different translators should be retuned.
+            if (translatorsList.length) {
+                const items = translatorsList.map(
+                    (translator): MediaReference => ({
+                        type: 'MediaReference',
+                        title: translator.title,
+                        ref: {
+                            type: 'ReferenceTranslator',
+                            translatorId: translator.id,
+                            id,
+                        },
+                    })
+                );
+                const mediaFolder: MediaFolder = {
+                    type: 'MediaFolder',
+                    title: '',
+                    children: items,
+                };
+                return mediaFolder;
+            } else if (episodesList.length) {
+                // It is a series. No translators are suggested.
+                // A folder with references to episodes should be returned.
+                return this.getMediaFolderFromEpisodesList(episodesList);
+            }
+
+            //It is just a movie. No translators are suggested. Returning the stream.
+            if (streamUrl) {
+                const streamMap = parseStreamMap(streamUrl);
+                return {
+                    type: 'MediaStreamMap',
+                    items: streamMap,
+                };
+            }
+
+            return null;
+        }
+        if (reference.type === 'ReferenceTranslator') {
+            const { id, translatorId } = reference;
+            const episodes = await this.getEpisodesList(id, translatorId);
+            if (episodes.length) {
+                return this.getMediaFolderFromEpisodesList(episodes);
+            }
+            return null;
+        }
+        if (reference.type === 'ReferenceEpisode') {
+            const stream = await this.getStreamFromEpisode(reference.episode);
+            return stream;
+        }
+        return null;
     }
 
     protected getStreamUrlFromAST(ast: Node): string | null {
@@ -155,72 +218,6 @@ export class HdrezkaClient {
                 return episode;
             })
             .filter((episode): episode is Episode => episode !== null);
-    }
-
-    async getMediaByReference(reference: Reference): Promise<Media | null> {
-        if (reference.type === 'ReferenceSearchResult') {
-            const id = this.getIdFromUrl(reference.searchResult.url);
-            if (!id) {
-                return null;
-            }
-
-            const { data: html } = await this.http.get(
-                reference.searchResult.url
-            );
-            const streamUrl = this.parseStreamUrlFromInlineScriptTag(html);
-            const translatorsList = this.parseTranslatorsListFromHtml(html);
-            const episodesList = this.parseEpisodesFromHtml(html, { id });
-
-            // Multiple translators are suggested.
-            // A folder of references to different translators should be retuned.
-            if (translatorsList.length) {
-                const items = translatorsList.map(
-                    (translator): MediaReference => ({
-                        type: 'MediaReference',
-                        title: translator.title,
-                        ref: {
-                            type: 'ReferenceTranslator',
-                            translatorId: translator.id,
-                            id,
-                        },
-                    })
-                );
-                const mediaFolder: MediaFolder = {
-                    type: 'MediaFolder',
-                    title: '',
-                    children: items,
-                };
-                return mediaFolder;
-            } else if (episodesList.length) {
-                // It is a series. No translators are suggested.
-                // A folder with references to episodes should be returned.
-                return this.getMediaFolderFromEpisodesList(episodesList);
-            }
-
-            //It is just a movie. No translators are suggested. Returning the stream.
-            if (streamUrl) {
-                const streamMap = parseStreamMap(streamUrl);
-                return {
-                    type: 'MediaStreamMap',
-                    items: streamMap,
-                };
-            }
-
-            return null;
-        }
-        if (reference.type === 'ReferenceTranslator') {
-            const { id, translatorId } = reference;
-            const episodes = await this.getEpisodesList(id, translatorId);
-            if (episodes.length) {
-                return this.getMediaFolderFromEpisodesList(episodes);
-            }
-            return null;
-        }
-        if (reference.type === 'ReferenceEpisode') {
-            const stream = await this.getStreamFromEpisode(reference.episode);
-            return stream;
-        }
-        return null;
     }
 
     protected async getStreamFromEpisode(

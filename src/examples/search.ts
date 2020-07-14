@@ -1,7 +1,7 @@
-import { HdrezkaClient } from '..';
+import { HdrezkaClientImpl } from '../HdrezkaClientImpl';
 
 async function main() {
-    const client = new HdrezkaClient();
+    const client = new HdrezkaClientImpl();
     const folder = await client.getSearchResults('doctor who');
     console.log(folder);
 }

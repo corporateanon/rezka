@@ -1,7 +1,7 @@
-import { HdrezkaClient } from '..';
+import { HdrezkaClientImpl } from '../HdrezkaClientImpl';
 
 async function main() {
-    const client = new HdrezkaClient();
+    const client = new HdrezkaClientImpl();
     const searchResultsFolder = await client.getSearchResults('доктор кто');
     if (searchResultsFolder.children[0].type !== 'MediaReference') {
         return;
