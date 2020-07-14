@@ -155,7 +155,7 @@ export class HdrezkaClient {
             // A folder of references to different translators should be retuned.
             if (translatorsList.length) {
                 const items = translatorsList.map(
-                    (translator): MediaReference<ReferenceSeriesFolder> => ({
+                    (translator): MediaReference => ({
                         type: 'reference',
                         title: translator.title,
                         ref: {
@@ -239,7 +239,7 @@ export class HdrezkaClient {
                 type: 'ReferenceEpisode',
                 episode,
             };
-            const mediaRef: MediaReference<ReferenceEpisode> = {
+            const mediaRef: MediaReference = {
                 type: 'reference',
                 ref,
                 title: episode.title,

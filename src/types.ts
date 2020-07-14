@@ -17,32 +17,30 @@ export type StreamMap = {
     [quality in StreamQuality]: MediaStream;
 };
 
-export interface Media {
-    type: 'folder' | 'stream' | 'streamMap' | 'reference';
-}
-
-export interface MediaFolder extends Media {
+export interface MediaFolder {
     type: 'folder';
     title: string;
     children: Media[];
 }
 
-export interface MediaReference<T extends Reference> extends Media {
+export interface MediaReference {
     type: 'reference';
     title: string;
-    ref: T;
+    ref: Reference;
 }
 
-export interface MediaStream extends Media {
+export interface MediaStream {
     type: 'stream';
     quality: StreamQuality;
     url: string;
 }
 
-export interface MediaStreamMap extends Media {
+export interface MediaStreamMap {
     type: 'streamMap';
     items: StreamMap;
 }
+
+export type Media = MediaFolder | MediaReference | MediaStreamMap | MediaStream;
 
 export interface Translator {
     id: string;
@@ -57,22 +55,20 @@ export interface Episode {
     episodeId: string;
 }
 
-export interface Reference {
-    type: 'ReferenceUrl' | 'ReferenceSeriesFolder' | 'ReferenceEpisode';
-}
-
-export interface ReferenceSeriesFolder extends Reference {
+export interface ReferenceSeriesFolder {
     type: 'ReferenceSeriesFolder';
     id: string; //TODO: use a whole Translator object
     translatorId: string;
 }
 
-export interface ReferenceEpisode extends Reference {
+export interface ReferenceEpisode {
     type: 'ReferenceEpisode';
     episode: Episode;
 }
 
-export interface ReferenceUrl extends Reference {
+export interface ReferenceUrl {
     type: 'ReferenceUrl';
     url: string;
 }
+
+export type Reference = ReferenceSeriesFolder | ReferenceEpisode | ReferenceUrl;

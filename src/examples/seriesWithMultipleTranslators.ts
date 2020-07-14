@@ -22,19 +22,19 @@ async function main() {
     if (child.type !== 'reference') {
         return;
     }
-    const res2 = await client.getMediaByReference(
-        (child as MediaReference<ReferenceSeriesFolder>).ref
-    );
+    const res2 = await client.getMediaByReference(child.ref);
     if (res2?.type !== 'folder') {
         return;
     }
-    const episodeReference = res2.children[0] as MediaReference<
-        ReferenceEpisode
-    >;
+    const episodeReference = res2.children[0];
     if (episodeReference.type !== 'reference') {
         return;
     }
+    if (episodeReference.ref.type !== 'ReferenceEpisode') {
+        return;
+    }
     const stream = await client.getMediaByReference(episodeReference.ref);
+    console.log(stream);
 }
 
 main().catch((e) => {
