@@ -2,11 +2,18 @@ import { HdrezkaClient } from '..';
 
 async function main() {
     const client = new HdrezkaClient();
-    const folderMedia = await client.getMediaByReference({
-        type: 'ReferenceUrl',
-        url:
-            'https://rezka.ag/series/action/11565-mesto-vstrechi-izmenit-nelzya.html',
-    });
+
+    const searchResultsFolder = await client.getSearchResults(
+        'место встречи изменить нельзя'
+    );
+    if (searchResultsFolder.children[0].type !== 'MediaReference') {
+        return;
+    }
+    console.log(`Found ${searchResultsFolder.children.length} results`);
+
+    const folderMedia = await client.getMediaByReference(
+        searchResultsFolder.children[0].ref
+    );
     if (folderMedia?.type !== 'MediaFolder') {
         return;
     }

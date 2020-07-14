@@ -83,4 +83,13 @@ export interface ReferenceUrl {
     url: string;
 }
 
-export type Reference = ReferenceTranslator | ReferenceEpisode | ReferenceUrl;
+export interface ReferenceSearchResult {
+    type: 'ReferenceSearchResult';
+    searchResult: SearchResult;
+}
+
+export type Reference =
+    | ReferenceTranslator
+    | ReferenceEpisode
+    | ReferenceUrl
+    | ReferenceSearchResult;

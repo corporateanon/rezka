@@ -5,6 +5,7 @@ import Axios, { AxiosInstance } from 'axios';
 import cheerio from 'cheerio';
 import { parse as parseUrl } from 'url';
 import {
+    ReferenceSearchResult,
     MediaFolder,
     MediaStream,
     MediaStreamMap,
@@ -17,6 +18,7 @@ import {
     ReferenceUrl,
     ReferenceEpisode,
     StreamMap,
+    Media,
 } from './types';
 import { parseStreamMap } from './utils';
 import { basename } from 'path';
@@ -28,7 +30,7 @@ export class HdrezkaClient {
         this.http = Axios.create();
     }
 
-    async getSearchResults(query: string): Promise<SearchResult[]> {
+    async getSearchResults(query: string): Promise<MediaFolder> {
         const { data: page } = await this.http.get(
             `https://rezka.ag/index.php`,
             {
@@ -40,7 +42,7 @@ export class HdrezkaClient {
             }
         );
         const dom = cheerio.load(page);
-        return Array.from(
+        const searchResults = Array.from(
             dom('.b-content__inline_item > .b-content__inline_item-link')
         )
             .map((item) => {
@@ -61,6 +63,24 @@ export class HdrezkaClient {
                 return res;
             })
             .filter((result): result is SearchResult => result !== null);
+        const items = searchResults.map((searchResult) => {
+            const searchResultReference: ReferenceSearchResult = {
+                type: 'ReferenceSearchResult',
+                searchResult,
+            };
+            const referenceMedia: MediaReference = {
+                type: 'MediaReference',
+                ref: searchResultReference,
+                title: searchResultReference.searchResult.title,
+            };
+            return referenceMedia;
+        });
+
+        return {
+            type: 'MediaFolder',
+            children: items,
+            title: '',
+        };
     }
 
     protected getStreamUrlFromAST(ast: Node): string | null {
@@ -137,16 +157,16 @@ export class HdrezkaClient {
             .filter((episode): episode is Episode => episode !== null);
     }
 
-    async getMediaByReference(
-        reference: ReferenceUrl | ReferenceTranslator | ReferenceEpisode
-    ): Promise<MediaFolder | MediaStream | MediaStreamMap | null> {
-        if (reference.type === 'ReferenceUrl') {
-            const id = this.getIdFromUrl(reference.url);
+    async getMediaByReference(reference: Reference): Promise<Media | null> {
+        if (reference.type === 'ReferenceSearchResult') {
+            const id = this.getIdFromUrl(reference.searchResult.url);
             if (!id) {
                 return null;
             }
 
-            const { data: html } = await this.http.get(reference.url);
+            const { data: html } = await this.http.get(
+                reference.searchResult.url
+            );
             const streamUrl = this.parseStreamUrlFromInlineScriptTag(html);
             const translatorsList = this.parseTranslatorsListFromHtml(html);
             const episodesList = this.parseEpisodesFromHtml(html, { id });

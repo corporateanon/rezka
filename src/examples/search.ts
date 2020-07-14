@@ -2,8 +2,8 @@ import { HdrezkaClient } from '..';
 
 async function main() {
     const client = new HdrezkaClient();
-    const res = await client.getSearchResults('doctor who');
-    console.log(res);
+    const folder = await client.getSearchResults('doctor who');
+    console.log(folder);
 }
 
 main().catch((e) => {

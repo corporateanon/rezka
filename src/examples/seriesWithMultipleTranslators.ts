@@ -2,13 +2,20 @@ import { HdrezkaClient } from '..';
 
 async function main() {
     const client = new HdrezkaClient();
-    const folderOfTranslatorReferences = await client.getMediaByReference({
-        type: 'ReferenceUrl',
-        url: 'https://rezka.ag/series/fiction/1745-doktor-kto-2005.html',
-    });
+    const searchResultsFolder = await client.getSearchResults('доктор кто');
+    if (searchResultsFolder.children[0].type !== 'MediaReference') {
+        return;
+    }
+    console.log(`Found ${searchResultsFolder.children.length} results`);
+    const folderOfTranslatorReferences = await client.getMediaByReference(
+        searchResultsFolder.children[0].ref
+    );
     if (folderOfTranslatorReferences?.type !== 'MediaFolder') {
         return;
     }
+    console.log(
+        `Found ${folderOfTranslatorReferences.children.length} translations`
+    );
     const [translatorReferenceMedia] = folderOfTranslatorReferences.children;
     if (!translatorReferenceMedia) {
         return;
@@ -22,6 +29,7 @@ async function main() {
     if (folderOfEpisodeReferences?.type !== 'MediaFolder') {
         return;
     }
+    console.log(`Found ${folderOfEpisodeReferences.children.length} episodes`);
     const episodeReference = folderOfEpisodeReferences.children[0];
     if (episodeReference.type !== 'MediaReference') {
         return;
