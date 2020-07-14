@@ -1,3 +1,7 @@
+//---------------------------------------------------------
+// Domain models
+//---------------------------------------------------------
+
 export interface SearchResult {
     title: string;
     subtitle?: string;
@@ -16,6 +20,23 @@ export enum StreamQuality {
 export type StreamMap = {
     [quality in StreamQuality]: MediaStream;
 };
+
+export interface Translator {
+    id: string;
+    title: string;
+}
+
+export interface Episode {
+    title: string;
+    id: string;
+    translatorId?: string;
+    seasonId: string;
+    episodeId: string;
+}
+
+//---------------------------------------------------------
+// Media: objects that can be displayed to user in a UI
+//---------------------------------------------------------
 
 export interface MediaFolder {
     type: 'folder';
@@ -42,18 +63,9 @@ export interface MediaStreamMap {
 
 export type Media = MediaFolder | MediaReference | MediaStreamMap | MediaStream;
 
-export interface Translator {
-    id: string;
-    title: string;
-}
-
-export interface Episode {
-    title: string;
-    id: string;
-    translatorId?: string;
-    seasonId: string;
-    episodeId: string;
-}
+//---------------------------------------------------------
+// References: items that are used for information retrieval
+//---------------------------------------------------------
 
 export interface ReferenceSeriesFolder {
     type: 'ReferenceSeriesFolder';
