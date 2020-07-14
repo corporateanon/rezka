@@ -1,40 +1,38 @@
 import { HdrezkaClient } from '..';
-import {
-    MediaReference,
-    ReferenceEpisode,
-    ReferenceSeriesFolder,
-} from '../types';
 
 async function main() {
     const client = new HdrezkaClient();
-    const res = await client.getMediaByReference({
+    const folderOfTranslatorReferences = await client.getMediaByReference({
         type: 'ReferenceUrl',
-        // url: 'https://rezka.ag/series/action/11565-mesto-vstrechi-izmenit-nelzya.html',
         url: 'https://rezka.ag/series/fiction/1745-doktor-kto-2005.html',
     });
-    if (res?.type !== 'folder') {
+    if (folderOfTranslatorReferences?.type !== 'MediaFolder') {
         return;
     }
-    const [child] = res.children;
-    if (!child) {
+    const [translatorReferenceMedia] = folderOfTranslatorReferences.children;
+    if (!translatorReferenceMedia) {
         return;
     }
-    if (child.type !== 'reference') {
+    if (translatorReferenceMedia.type !== 'MediaReference') {
         return;
     }
-    const res2 = await client.getMediaByReference(child.ref);
-    if (res2?.type !== 'folder') {
+    const folderOfEpisodeReferences = await client.getMediaByReference(
+        translatorReferenceMedia.ref
+    );
+    if (folderOfEpisodeReferences?.type !== 'MediaFolder') {
         return;
     }
-    const episodeReference = res2.children[0];
-    if (episodeReference.type !== 'reference') {
+    const episodeReference = folderOfEpisodeReferences.children[0];
+    if (episodeReference.type !== 'MediaReference') {
         return;
     }
     if (episodeReference.ref.type !== 'ReferenceEpisode') {
         return;
     }
-    const stream = await client.getMediaByReference(episodeReference.ref);
-    console.log(stream);
+    const streamMapMedia = await client.getMediaByReference(
+        episodeReference.ref
+    );
+    console.log(streamMapMedia);
 }
 
 main().catch((e) => {

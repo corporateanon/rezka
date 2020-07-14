@@ -24,7 +24,7 @@ export function parseStreamMap(urls: string): StreamMap {
             }
 
             const stream: MediaStream = {
-                type: 'stream',
+                type: 'MediaStream',
                 quality: quality as StreamQuality, //TODO: replace it with a real check
                 url,
             };

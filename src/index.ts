@@ -12,7 +12,7 @@ import {
     Translator,
     Episode,
     MediaReference,
-    ReferenceSeriesFolder,
+    ReferenceTranslator,
     Reference,
     ReferenceUrl,
     ReferenceEpisode,
@@ -138,7 +138,7 @@ export class HdrezkaClient {
     }
 
     async getMediaByReference(
-        reference: ReferenceUrl | ReferenceSeriesFolder | ReferenceEpisode
+        reference: ReferenceUrl | ReferenceTranslator | ReferenceEpisode
     ): Promise<MediaFolder | MediaStream | MediaStreamMap | null> {
         if (reference.type === 'ReferenceUrl') {
             const id = this.getIdFromUrl(reference.url);
@@ -156,17 +156,17 @@ export class HdrezkaClient {
             if (translatorsList.length) {
                 const items = translatorsList.map(
                     (translator): MediaReference => ({
-                        type: 'reference',
+                        type: 'MediaReference',
                         title: translator.title,
                         ref: {
-                            type: 'ReferenceSeriesFolder',
+                            type: 'ReferenceTranslator',
                             translatorId: translator.id,
                             id,
                         },
                     })
                 );
                 const mediaFolder: MediaFolder = {
-                    type: 'folder',
+                    type: 'MediaFolder',
                     title: '',
                     children: items,
                 };
@@ -181,14 +181,14 @@ export class HdrezkaClient {
             if (streamUrl) {
                 const streamMap = parseStreamMap(streamUrl);
                 return {
-                    type: 'streamMap',
+                    type: 'MediaStreamMap',
                     items: streamMap,
                 };
             }
 
             return null;
         }
-        if (reference.type === 'ReferenceSeriesFolder') {
+        if (reference.type === 'ReferenceTranslator') {
             const { id, translatorId } = reference;
             const episodes = await this.getEpisodesList(id, translatorId);
             if (episodes.length) {
@@ -227,7 +227,7 @@ export class HdrezkaClient {
 
         const streamMap = parseStreamMap(streamsUrl);
         const mediaStreamMap: MediaStreamMap = {
-            type: 'streamMap',
+            type: 'MediaStreamMap',
             items: streamMap,
         };
         return mediaStreamMap;
@@ -240,14 +240,14 @@ export class HdrezkaClient {
                 episode,
             };
             const mediaRef: MediaReference = {
-                type: 'reference',
+                type: 'MediaReference',
                 ref,
                 title: episode.title,
             };
             return mediaRef;
         });
         const folder: MediaFolder = {
-            type: 'folder',
+            type: 'MediaFolder',
             children: episodeReferences,
             title: '',
         };

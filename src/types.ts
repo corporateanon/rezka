@@ -39,25 +39,25 @@ export interface Episode {
 //---------------------------------------------------------
 
 export interface MediaFolder {
-    type: 'folder';
+    type: 'MediaFolder';
     title: string;
     children: Media[];
 }
 
 export interface MediaReference {
-    type: 'reference';
+    type: 'MediaReference';
     title: string;
     ref: Reference;
 }
 
 export interface MediaStream {
-    type: 'stream';
+    type: 'MediaStream';
     quality: StreamQuality;
     url: string;
 }
 
 export interface MediaStreamMap {
-    type: 'streamMap';
+    type: 'MediaStreamMap';
     items: StreamMap;
 }
 
@@ -67,8 +67,8 @@ export type Media = MediaFolder | MediaReference | MediaStreamMap | MediaStream;
 // References: items that are used for information retrieval
 //---------------------------------------------------------
 
-export interface ReferenceSeriesFolder {
-    type: 'ReferenceSeriesFolder';
+export interface ReferenceTranslator {
+    type: 'ReferenceTranslator';
     id: string; //TODO: use a whole Translator object
     translatorId: string;
 }
@@ -83,4 +83,4 @@ export interface ReferenceUrl {
     url: string;
 }
 
-export type Reference = ReferenceSeriesFolder | ReferenceEpisode | ReferenceUrl;
+export type Reference = ReferenceTranslator | ReferenceEpisode | ReferenceUrl;
