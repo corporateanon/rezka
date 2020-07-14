@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "example:search",
+            "name": "Search",
             "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/src/examples/search.ts",
             "outFiles": ["${workspaceFolder}/**/*.js"],
@@ -17,7 +17,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "example:getSingleStream",
+            "name": "Single stream movie",
             "skipFiles": ["<node_internals>/**"],
             "program": "${workspaceFolder}/src/examples/getSingleStream.ts",
             "outFiles": ["${workspaceFolder}/**/*.js"],
@@ -27,9 +27,9 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "example:getTranslatorsList",
+            "name": "Series with multiple translators",
             "skipFiles": ["<node_internals>/**"],
-            "program": "${workspaceFolder}/src/examples/getTranslatorsList.ts",
+            "program": "${workspaceFolder}/src/examples/seriesWithMultipleTranslators.ts",
             "outFiles": ["${workspaceFolder}/**/*.js"],
             "preLaunchTask": "npm: build",
             "console": "integratedTerminal"

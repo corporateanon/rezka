@@ -1,5 +1,9 @@
 import { HdrezkaClient } from '..';
-import { ReferenceSeriesFolder, Media, MediaReference } from '../types';
+import {
+    MediaReference,
+    ReferenceEpisode,
+    ReferenceSeriesFolder,
+} from '../types';
 
 async function main() {
     const client = new HdrezkaClient();
@@ -21,7 +25,16 @@ async function main() {
     const res2 = await client.getMediaByReference(
         (child as MediaReference<ReferenceSeriesFolder>).ref
     );
-    console.log(res2);
+    if (res2?.type !== 'folder') {
+        return;
+    }
+    const episodeReference = res2.children[0] as MediaReference<
+        ReferenceEpisode
+    >;
+    if (episodeReference.type !== 'reference') {
+        return;
+    }
+    const stream = await client.getMediaByReference(episodeReference.ref);
 }
 
 main().catch((e) => {

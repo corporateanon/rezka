@@ -51,8 +51,10 @@ export interface Translator {
 
 export interface Episode {
     title: string;
-    episodeId: string;
+    id: string;
+    translatorId?: string;
     seasonId: string;
+    episodeId: string;
 }
 
 export interface Reference {

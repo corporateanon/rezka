@@ -16,6 +16,7 @@ import {
     Reference,
     ReferenceUrl,
     ReferenceEpisode,
+    StreamMap,
 } from './types';
 import { parseStreamMap } from './utils';
 import { basename } from 'path';
@@ -110,7 +111,10 @@ export class HdrezkaClient {
             .filter((tr): tr is Translator => tr !== null);
     }
 
-    protected parseEpisodesFromHtml(html: string): Episode[] {
+    protected parseEpisodesFromHtml(
+        html: string,
+        { id, translatorId }: Pick<Episode, 'id' | 'translatorId'>
+    ): Episode[] {
         const dom = cheerio.load(html);
         const liList = Array.from(dom('li.b-simple_episode__item'));
         return liList
@@ -121,13 +125,20 @@ export class HdrezkaClient {
                 if (!seasonId || !episodeId || !title) {
                     return null;
                 }
-                return { episodeId, seasonId, title } as Episode;
+                const episode: Episode = {
+                    id,
+                    title,
+                    seasonId,
+                    episodeId,
+                    translatorId,
+                };
+                return episode;
             })
             .filter((episode): episode is Episode => episode !== null);
     }
 
     async getMediaByReference(
-        reference: ReferenceUrl | ReferenceSeriesFolder
+        reference: ReferenceUrl | ReferenceSeriesFolder | ReferenceEpisode
     ): Promise<MediaFolder | MediaStream | MediaStreamMap | null> {
         if (reference.type === 'ReferenceUrl') {
             const id = this.getIdFromUrl(reference.url);
@@ -138,8 +149,10 @@ export class HdrezkaClient {
             const { data: html } = await this.http.get(reference.url);
             const streamUrl = this.parseStreamUrlFromInlineScriptTag(html);
             const translatorsList = this.parseTranslatorsListFromHtml(html);
-            const episodesList = this.parseEpisodesFromHtml(html);
+            const episodesList = this.parseEpisodesFromHtml(html, { id });
 
+            // Multiple translators are suggested.
+            // A folder of references to different translators should be retuned.
             if (translatorsList.length) {
                 const items = translatorsList.map(
                     (translator): MediaReference<ReferenceSeriesFolder> => ({
@@ -159,9 +172,12 @@ export class HdrezkaClient {
                 };
                 return mediaFolder;
             } else if (episodesList.length) {
+                // It is a series. No translators are suggested.
+                // A folder with references to episodes should be returned.
                 return this.getMediaFolderFromEpisodesList(episodesList);
             }
 
+            //It is just a movie. No translators are suggested. Returning the stream.
             if (streamUrl) {
                 const streamMap = parseStreamMap(streamUrl);
                 return {
@@ -180,7 +196,41 @@ export class HdrezkaClient {
             }
             return null;
         }
+        if (reference.type === 'ReferenceEpisode') {
+            const stream = await this.getStreamFromEpisode(reference.episode);
+            return stream;
+        }
         return null;
+    }
+
+    protected async getStreamFromEpisode(
+        episode: Episode
+    ): Promise<MediaStreamMap> {
+        const {
+            data: { url: streamsUrl },
+        } = await this.http.post(
+            'https://rezka.ag/ajax/get_cdn_series/',
+            querystringStringify({
+                action: 'get_stream',
+                id: episode.id,
+                translator_id: episode.translatorId,
+                season: episode.seasonId,
+                episode: episode.episodeId,
+            }),
+            {
+                headers: {
+                    'Content-Type':
+                        'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+            }
+        );
+
+        const streamMap = parseStreamMap(streamsUrl);
+        const mediaStreamMap: MediaStreamMap = {
+            type: 'streamMap',
+            items: streamMap,
+        };
+        return mediaStreamMap;
     }
 
     protected getMediaFolderFromEpisodesList(episodes: Episode[]): MediaFolder {
@@ -224,7 +274,7 @@ export class HdrezkaClient {
                 },
             }
         );
-        return this.parseEpisodesFromHtml(html);
+        return this.parseEpisodesFromHtml(html, { id, translatorId });
     }
 
     protected getIdFromUrl(urlStr: string): string | null {
