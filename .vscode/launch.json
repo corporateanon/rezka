@@ -43,6 +43,16 @@
             "outFiles": ["${workspaceFolder}/**/*.js"],
             "preLaunchTask": "npm: build",
             "console": "integratedTerminal"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Movie with multiple translators",
+            "skipFiles": ["<node_internals>/**"],
+            "program": "${workspaceFolder}/src/examples/movieWithMultipleTranslators.ts",
+            "outFiles": ["${workspaceFolder}/**/*.js"],
+            "preLaunchTask": "npm: build",
+            "console": "integratedTerminal"
         }
     ]
 }

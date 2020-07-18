@@ -17,6 +17,7 @@ import {
     ReferenceSearchResult,
     SearchResult,
     Translator,
+    StreamMap,
 } from './types';
 import { parseStreamMap } from './utils';
 
@@ -114,7 +115,8 @@ export class HdrezkaClientImpl implements HdrezkaClient {
                     children: items,
                 };
                 return mediaFolder;
-            } else if (episodesList.length) {
+            }
+            if (episodesList.length) {
                 // It is a series. No translators are suggested.
                 // A folder with references to episodes should be returned.
                 return this.getMediaFolderFromEpisodesList(episodesList);
@@ -137,6 +139,18 @@ export class HdrezkaClientImpl implements HdrezkaClient {
             if (episodes.length) {
                 return this.getMediaFolderFromEpisodesList(episodes);
             }
+
+            const streamMap = await this.getStreamMapByTranslation(
+                id,
+                translatorId
+            );
+            if (streamMap) {
+                return {
+                    type: 'MediaStreamMap',
+                    items: streamMap,
+                };
+            }
+
             return null;
         }
         if (reference.type === 'ReferenceEpisode') {
@@ -198,6 +212,9 @@ export class HdrezkaClientImpl implements HdrezkaClient {
         html: string,
         { id, translatorId }: Pick<Episode, 'id' | 'translatorId'>
     ): Episode[] {
+        if (!html) {
+            return [];
+        }
         const dom = cheerio.load(html);
         const liList = Array.from(dom('li.b-simple_episode__item'));
         return liList
@@ -275,9 +292,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
         id: string,
         translatorId: string
     ): Promise<Episode[]> {
-        const {
-            data: { episodes: html },
-        } = await this.http.post(
+        const { data } = await this.http.post(
             'https://rezka.ag/ajax/get_cdn_series/',
             querystringStringify({
                 action: 'get_episodes',
@@ -291,7 +306,33 @@ export class HdrezkaClientImpl implements HdrezkaClient {
                 },
             }
         );
+        const { episodes: html } = data;
         return this.parseEpisodesFromHtml(html, { id, translatorId });
+    }
+
+    protected async getStreamMapByTranslation(
+        id: string,
+        translatorId: string
+    ): Promise<StreamMap | null> {
+        const { data } = await this.http.post(
+            'https://rezka.ag/ajax/get_cdn_series/',
+            querystringStringify({
+                action: 'get_movie',
+                id,
+                translator_id: translatorId,
+            }),
+            {
+                headers: {
+                    'Content-Type':
+                        'application/x-www-form-urlencoded; charset=UTF-8',
+                },
+            }
+        );
+        const { url: html } = data;
+        if (!html) {
+            return null;
+        }
+        return parseStreamMap(html);
     }
 
     protected getIdFromUrl(urlStr: string): string | null {
