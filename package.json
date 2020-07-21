@@ -11,11 +11,11 @@
         "build": "npm run build:types && npm run build:js",
         "build:js": "babel src --out-dir lib --extensions \".ts,.tsx\" --source-maps inline",
         "build:types": "tsc --emitDeclarationOnly",
-        "example:search": "npm run build && node lib/examples/search",
         "prepublish": "npm run build",
         "test": "jest",
         "type-check": "tsc --noEmit",
-        "type-check:watch": "npm run type-check -- --watch"
+        "type-check:watch": "npm run type-check -- --watch",
+        "example:edge-case-default-translator": "npm run build && node lib/examples/edge-case-default-translator"
     },
     "dependencies": {
         "acorn": "^7.2.0",

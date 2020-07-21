@@ -88,6 +88,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
 
     async getMediaByReference(reference: Reference): Promise<Media | null> {
         if (reference.type === 'ReferenceSearchResult') {
+            debugger;
             const id = this.getIdFromUrl(reference.searchResult.url);
             if (!id) {
                 return null;
@@ -96,9 +97,15 @@ export class HdrezkaClientImpl implements HdrezkaClient {
             const { data: html } = await this.http.get(
                 reference.searchResult.url
             );
-            const streamUrl = this.parseStreamUrlFromInlineScriptTag(html);
+            const {
+                streamUrl,
+                defaultTranslatorId,
+            } = this.parseAvailableDataFromInlineScriptTag(html);
             const translatorsList = this.parseTranslatorsListFromHtml(html);
-            const episodesList = this.parseEpisodesFromHtml(html, { id });
+            const episodesList = this.parseEpisodesFromHtml(html, {
+                id,
+                translatorId: defaultTranslatorId || undefined,
+            });
 
             // Multiple translators are suggested.
             // A folder of references to different translators should be retuned.
@@ -183,19 +190,51 @@ export class HdrezkaClientImpl implements HdrezkaClient {
         return url;
     }
 
-    protected parseStreamUrlFromInlineScriptTag(html: string): string | null {
+    protected getDefaultTranslatorIdFromAST(ast: Node): string | null {
+        let translatorId = null;
+
+        walkSimple(ast, {
+            CallExpression(node: any) {
+                if (
+                    node?.callee?.type === 'MemberExpression' &&
+                    node?.callee?.property?.name === 'initCDNSeriesEvents' &&
+                    node?.arguments?.[1]?.type === 'Literal' &&
+                    node?.arguments?.[1]?.value
+                ) {
+                    translatorId = node.arguments[1].value.toString();
+                }
+            },
+        });
+        return translatorId;
+    }
+
+    protected parseAvailableDataFromInlineScriptTag(
+        html: string
+    ): {
+        streamUrl: string | null;
+        defaultTranslatorId: string | null;
+    } {
         const dom = cheerio.load(html);
         const asts = Array.from(
             dom('script').filter((i, scriptTag) => {
                 const source = dom(scriptTag).html() ?? '';
-                return !!source.match(/initCDNMoviesEvents/);
+                return !!source.match(
+                    /initCDNMoviesEvents|initCDNSeriesEvents/
+                );
             })
         ).map((scriptTag) => {
             return parseJS(dom(scriptTag).html() ?? '');
         });
 
         const urls = asts.map((ast) => this.getStreamUrlFromAST(ast));
-        return urls.filter((_) => _)[0] ?? null;
+        const streamUrl = urls.filter((_) => _)[0] ?? null;
+
+        const translatorIds = asts.map((ast) =>
+            this.getDefaultTranslatorIdFromAST(ast)
+        );
+        const defaultTranslatorId = translatorIds.filter((_) => _)[0] ?? null;
+
+        return { defaultTranslatorId, streamUrl };
     }
 
     protected parseTranslatorsListFromHtml(html: string): Translator[] {
