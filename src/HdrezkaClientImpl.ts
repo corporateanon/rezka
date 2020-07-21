@@ -281,7 +281,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
             const mediaRef: MediaReference = {
                 type: 'MediaReference',
                 ref,
-                title: episode.title,
+                title: `Season ${episode.seasonId}, Episode ${episode.episodeId}`,
             };
             return mediaRef;
         });
