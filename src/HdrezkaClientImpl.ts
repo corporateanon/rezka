@@ -65,10 +65,16 @@ export class HdrezkaClientImpl implements HdrezkaClient {
                 type: 'ReferenceSearchResult',
                 searchResult,
             };
+
+            let referenceTitle = searchResultReference.searchResult.title;
+            if (searchResultReference.searchResult.subtitle) {
+                referenceTitle = `${referenceTitle} — ${searchResultReference.searchResult.subtitle}`;
+            }
+
             const referenceMedia: MediaReference = {
                 type: 'MediaReference',
                 ref: searchResultReference,
-                title: searchResultReference.searchResult.title,
+                title: referenceTitle,
             };
             return referenceMedia;
         });
