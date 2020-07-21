@@ -25,20 +25,19 @@ export class HdrezkaClientImpl implements HdrezkaClient {
     protected http: AxiosInstance;
 
     constructor() {
-        this.http = Axios.create();
+        this.http = Axios.create({
+            baseURL: 'https://rezka.ag',
+        });
     }
 
     async getSearchResults(query: string): Promise<MediaFolder> {
-        const { data: page } = await this.http.get(
-            `https://rezka.ag/index.php`,
-            {
-                params: {
-                    do: 'search',
-                    subaction: 'search',
-                    q: query,
-                },
-            }
-        );
+        const { data: page } = await this.http.get(`/index.php`, {
+            params: {
+                do: 'search',
+                subaction: 'search',
+                q: query,
+            },
+        });
         const dom = cheerio.load(page);
         const searchResults = Array.from(
             dom('.b-content__inline_item > .b-content__inline_item-link')
@@ -243,7 +242,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
         const {
             data: { url: streamsUrl },
         } = await this.http.post(
-            'https://rezka.ag/ajax/get_cdn_series/',
+            '/ajax/get_cdn_series/',
             querystringStringify({
                 action: 'get_stream',
                 id: episode.id,
@@ -293,7 +292,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
         translatorId: string
     ): Promise<Episode[]> {
         const { data } = await this.http.post(
-            'https://rezka.ag/ajax/get_cdn_series/',
+            '/ajax/get_cdn_series/',
             querystringStringify({
                 action: 'get_episodes',
                 id,
@@ -315,7 +314,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
         translatorId: string
     ): Promise<StreamMap | null> {
         const { data } = await this.http.post(
-            'https://rezka.ag/ajax/get_cdn_series/',
+            '/ajax/get_cdn_series/',
             querystringStringify({
                 action: 'get_movie',
                 id,
