@@ -88,7 +88,6 @@ export class HdrezkaClientImpl implements HdrezkaClient {
 
     async getMediaByReference(reference: Reference): Promise<Media | null> {
         if (reference.type === 'ReferenceSearchResult') {
-            debugger;
             const id = this.getIdFromUrl(reference.searchResult.url);
             if (!id) {
                 return null;
