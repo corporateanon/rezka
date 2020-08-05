@@ -34,6 +34,12 @@ export interface Episode {
     episodeId: string;
 }
 
+export enum MediaFolderKind {
+    TranslationsList = 'TranslationsList',
+    EpisodesList = 'EpisodesList',
+    SearchResultsList = 'SearchResultsList',
+}
+
 //---------------------------------------------------------
 // Media: objects that can be displayed to user in a UI
 //---------------------------------------------------------
@@ -42,6 +48,7 @@ export interface MediaFolder {
     type: 'MediaFolder';
     title: string;
     children: Media[];
+    kind: MediaFolderKind;
 }
 
 export interface MediaReference {

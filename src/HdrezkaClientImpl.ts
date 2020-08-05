@@ -18,6 +18,7 @@ import {
     SearchResult,
     Translator,
     StreamMap,
+    MediaFolderKind,
 } from './types';
 import { parseStreamMap } from './utils';
 
@@ -81,6 +82,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
 
         return {
             type: 'MediaFolder',
+            kind: MediaFolderKind.SearchResultsList,
             children: items,
             title: '',
         };
@@ -122,6 +124,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
                 );
                 const mediaFolder: MediaFolder = {
                     type: 'MediaFolder',
+                    kind: MediaFolderKind.TranslationsList,
                     title: '',
                     children: items,
                 };
@@ -325,6 +328,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
         });
         const folder: MediaFolder = {
             type: 'MediaFolder',
+            kind: MediaFolderKind.EpisodesList,
             children: episodeReferences,
             title: '',
         };

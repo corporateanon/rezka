@@ -60,6 +60,7 @@ describe('integration', () => {
                   "type": "MediaReference",
                 },
               ],
+              "kind": "SearchResultsList",
               "title": "",
               "type": "MediaFolder",
             }
@@ -138,83 +139,84 @@ describe('integration', () => {
         expect(folderOfEpisodeReferences?.type).toEqual('MediaFolder');
 
         expect(folderOfEpisodeReferences).toMatchInlineSnapshot(`
-                      Object {
-                        "children": Array [
-                          Object {
-                            "ref": Object {
-                              "episode": Object {
-                                "episodeId": "1",
-                                "id": "11565",
-                                "seasonId": "1",
-                                "title": "Серия 1",
-                                "translatorId": undefined,
-                              },
-                              "type": "ReferenceEpisode",
-                            },
-                            "title": "Season 1, Episode 1",
-                            "type": "MediaReference",
-                          },
-                          Object {
-                            "ref": Object {
-                              "episode": Object {
-                                "episodeId": "2",
-                                "id": "11565",
-                                "seasonId": "1",
-                                "title": "Серия 2",
-                                "translatorId": undefined,
-                              },
-                              "type": "ReferenceEpisode",
-                            },
-                            "title": "Season 1, Episode 2",
-                            "type": "MediaReference",
-                          },
-                          Object {
-                            "ref": Object {
-                              "episode": Object {
-                                "episodeId": "3",
-                                "id": "11565",
-                                "seasonId": "1",
-                                "title": "Серия 3",
-                                "translatorId": undefined,
-                              },
-                              "type": "ReferenceEpisode",
-                            },
-                            "title": "Season 1, Episode 3",
-                            "type": "MediaReference",
-                          },
-                          Object {
-                            "ref": Object {
-                              "episode": Object {
-                                "episodeId": "4",
-                                "id": "11565",
-                                "seasonId": "1",
-                                "title": "Серия 4",
-                                "translatorId": undefined,
-                              },
-                              "type": "ReferenceEpisode",
-                            },
-                            "title": "Season 1, Episode 4",
-                            "type": "MediaReference",
-                          },
-                          Object {
-                            "ref": Object {
-                              "episode": Object {
-                                "episodeId": "5",
-                                "id": "11565",
-                                "seasonId": "1",
-                                "title": "Серия 5",
-                                "translatorId": undefined,
-                              },
-                              "type": "ReferenceEpisode",
-                            },
-                            "title": "Season 1, Episode 5",
-                            "type": "MediaReference",
-                          },
-                        ],
-                        "title": "",
-                        "type": "MediaFolder",
-                      }
-              `);
+            Object {
+              "children": Array [
+                Object {
+                  "ref": Object {
+                    "episode": Object {
+                      "episodeId": "1",
+                      "id": "11565",
+                      "seasonId": "1",
+                      "title": "Серия 1",
+                      "translatorId": undefined,
+                    },
+                    "type": "ReferenceEpisode",
+                  },
+                  "title": "Season 1, Episode 1",
+                  "type": "MediaReference",
+                },
+                Object {
+                  "ref": Object {
+                    "episode": Object {
+                      "episodeId": "2",
+                      "id": "11565",
+                      "seasonId": "1",
+                      "title": "Серия 2",
+                      "translatorId": undefined,
+                    },
+                    "type": "ReferenceEpisode",
+                  },
+                  "title": "Season 1, Episode 2",
+                  "type": "MediaReference",
+                },
+                Object {
+                  "ref": Object {
+                    "episode": Object {
+                      "episodeId": "3",
+                      "id": "11565",
+                      "seasonId": "1",
+                      "title": "Серия 3",
+                      "translatorId": undefined,
+                    },
+                    "type": "ReferenceEpisode",
+                  },
+                  "title": "Season 1, Episode 3",
+                  "type": "MediaReference",
+                },
+                Object {
+                  "ref": Object {
+                    "episode": Object {
+                      "episodeId": "4",
+                      "id": "11565",
+                      "seasonId": "1",
+                      "title": "Серия 4",
+                      "translatorId": undefined,
+                    },
+                    "type": "ReferenceEpisode",
+                  },
+                  "title": "Season 1, Episode 4",
+                  "type": "MediaReference",
+                },
+                Object {
+                  "ref": Object {
+                    "episode": Object {
+                      "episodeId": "5",
+                      "id": "11565",
+                      "seasonId": "1",
+                      "title": "Серия 5",
+                      "translatorId": undefined,
+                    },
+                    "type": "ReferenceEpisode",
+                  },
+                  "title": "Season 1, Episode 5",
+                  "type": "MediaReference",
+                },
+              ],
+              "kind": "EpisodesList",
+              "title": "",
+              "type": "MediaFolder",
+            }
+        `);
 
         const episodeReference = (<MediaFolder>folderOfEpisodeReferences)
             .children[0] as MediaReference;
