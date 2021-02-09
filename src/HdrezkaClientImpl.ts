@@ -32,7 +32,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
     }
 
     async getSearchResults(query: string): Promise<MediaFolder> {
-        const { data: page } = await this.http.get(`/index.php`, {
+        const { data: page } = await this.http.get(`/search/`, {
             params: {
                 do: 'search',
                 subaction: 'search',

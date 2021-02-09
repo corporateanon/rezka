@@ -59,6 +59,18 @@ describe('integration', () => {
                   "title": "Доктор Кто: Шада — 2017, Великобритания, Фантастика",
                   "type": "MediaReference",
                 },
+                Object {
+                  "ref": Object {
+                    "searchResult": Object {
+                      "subtitle": "2020, Великобритания, Приключения",
+                      "title": "Доктор Кто: Безликие",
+                      "url": "https://rezka.ag/cartoons/adventures/35880-doktor-kto-bezlikie-2020.html",
+                    },
+                    "type": "ReferenceSearchResult",
+                  },
+                  "title": "Доктор Кто: Безликие — 2020, Великобритания, Приключения",
+                  "type": "MediaReference",
+                },
               ],
               "kind": "SearchResultsList",
               "title": "",
@@ -305,13 +317,15 @@ describe('integration', () => {
     it('should load movie with multiple translators', async () => {
         const client = new HdrezkaClientImpl();
 
-        const searchResultsFolder = await client.getSearchResults('паразиты');
+        const searchResultsFolder = await client.getSearchResults(
+            'Терминатор 2: Судный день'
+        );
 
         const searchRes = searchResultsFolder.children.find(
             (result) =>
                 result.type === 'MediaReference' &&
                 result.ref.type === 'ReferenceSearchResult' &&
-                result.ref.searchResult.subtitle?.match(/Корея/)
+                result.ref.searchResult.subtitle?.match(/1991/)
         ) as MediaReference | undefined;
 
         expect(searchRes).not.toBe(undefined);

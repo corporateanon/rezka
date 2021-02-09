@@ -32,6 +32,7 @@
         "@types/cheerio": "^0.22.18",
         "@types/jest": "^25.2.3",
         "core-js": "3",
+        "http-inspector": "^0.1.9",
         "jest": "^26.0.1",
         "keypather": "^3.1.0",
         "prettier": "^2.0.5",
