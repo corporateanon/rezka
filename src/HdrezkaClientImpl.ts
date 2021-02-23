@@ -117,7 +117,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
                         title: translator.title,
                         ref: {
                             type: 'ReferenceTranslator',
-                            translatorId: translator.id,
+                            translator,
                             id,
                         },
                     })
@@ -148,15 +148,15 @@ export class HdrezkaClientImpl implements HdrezkaClient {
             return null;
         }
         if (reference.type === 'ReferenceTranslator') {
-            const { id, translatorId } = reference;
-            const episodes = await this.getEpisodesList(id, translatorId);
+            const { id, translator } = reference;
+            const episodes = await this.getEpisodesList(id, translator);
             if (episodes.length) {
                 return this.getMediaFolderFromEpisodesList(episodes);
             }
 
             const streamMap = await this.getStreamMapByTranslation(
                 id,
-                translatorId
+                translator
             );
             if (streamMap) {
                 return {
@@ -246,16 +246,27 @@ export class HdrezkaClientImpl implements HdrezkaClient {
             .map((li) => {
                 const title = dom(li).attr('title');
                 const translatorId = dom(li).attr('data-translator_id');
+                const isCamrip = dom(li).attr('data-camrip');
+                const isAds = dom(li).attr('data-ads');
+                const isDirector = dom(li).attr('data-director');
                 if (!title || !translatorId) {
                     return null;
                 }
-                return { id: translatorId, title } as Translator;
+
+                return {
+                    id: translatorId,
+                    title,
+                    isAds,
+                    isCamrip,
+                    isDirector,
+                } as Translator;
             })
             .filter((tr): tr is Translator => tr !== null);
     }
 
     protected parseEpisodesFromHtml(
         html: string,
+        //TODO: use the whole Translator
         { id, translatorId }: Pick<Episode, 'id' | 'translatorId'>
     ): Episode[] {
         if (!html) {
@@ -337,14 +348,15 @@ export class HdrezkaClientImpl implements HdrezkaClient {
 
     protected async getEpisodesList(
         id: string,
-        translatorId: string
+        translator: Translator
     ): Promise<Episode[]> {
         const { data } = await this.http.post(
             '/ajax/get_cdn_series/',
             querystringStringify({
                 action: 'get_episodes',
                 id,
-                translator_id: translatorId,
+                translator_id: translator.id,
+                //TODO: other translator fields
             }),
             {
                 headers: {
@@ -354,19 +366,25 @@ export class HdrezkaClientImpl implements HdrezkaClient {
             }
         );
         const { episodes: html } = data;
-        return this.parseEpisodesFromHtml(html, { id, translatorId });
+        return this.parseEpisodesFromHtml(html, {
+            id,
+            translatorId: translator.id,
+        });
     }
 
     protected async getStreamMapByTranslation(
         id: string,
-        translatorId: string
+        translator: Translator
     ): Promise<StreamMap | null> {
         const { data } = await this.http.post(
             '/ajax/get_cdn_series/',
             querystringStringify({
                 action: 'get_movie',
                 id,
-                translator_id: translatorId,
+                translator_id: translator.id,
+                is_camrip: translator.isCamrip,
+                is_ads: translator.isAds,
+                is_director: translator.isDirector,
             }),
             {
                 headers: {

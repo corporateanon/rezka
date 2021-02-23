@@ -24,6 +24,9 @@ export type StreamMap = {
 export interface Translator {
     id: string;
     title: string;
+    isCamrip: string;
+    isAds: string;
+    isDirector: string;
 }
 
 export interface Episode {
@@ -76,8 +79,8 @@ export type Media = MediaFolder | MediaReference | MediaStreamMap | MediaStream;
 
 export interface ReferenceTranslator {
     type: 'ReferenceTranslator';
-    id: string; //TODO: use a whole Translator object
-    translatorId: string;
+    id: string;
+    translator: Translator;
 }
 
 export interface ReferenceEpisode {
