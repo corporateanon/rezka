@@ -22,8 +22,11 @@ export type StreamMap = {
 };
 
 export interface Translator {
-    id: string;
+    translatorId: string;
     title: string;
+    isCamrip?: string;
+    isAds?: string;
+    isDirector?: string;
 }
 
 export interface Episode {
@@ -74,11 +77,10 @@ export type Media = MediaFolder | MediaReference | MediaStreamMap | MediaStream;
 // References: items that are used for information retrieval
 //---------------------------------------------------------
 
-export interface ReferenceTranslator {
+export type ReferenceTranslator = {
     type: 'ReferenceTranslator';
-    id: string; //TODO: use a whole Translator object
-    translatorId: string;
-}
+    id: string;
+} & Translator;
 
 export interface ReferenceEpisode {
     type: 'ReferenceEpisode';
