@@ -6,6 +6,7 @@ export interface SearchResult {
     title: string;
     subtitle?: string;
     url: string;
+    id: string;
 }
 
 export enum StreamQuality {

@@ -51,10 +51,15 @@ export class HdrezkaClientImpl implements HdrezkaClient {
                 if (!url) {
                     return null;
                 }
+                const id = this.getIdFromUrl(url);
+                if (!id) {
+                    return null;
+                }
                 const div = dom(item).children('div');
                 const title = a.text();
                 const subtitle = div.text();
                 const res: SearchResult = {
+                    id,
                     url,
                     title,
                     subtitle,

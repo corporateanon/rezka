@@ -14,6 +14,7 @@ describe('integration', () => {
                 Object {
                   "ref": Object {
                     "searchResult": Object {
+                      "id": "1745",
                       "subtitle": "2005 - ..., Великобритания, Фантастика",
                       "title": "Доктор Кто",
                       "url": "https://rezka.ag/series/fiction/1745-doktor-kto-2005.html",
@@ -26,6 +27,7 @@ describe('integration', () => {
                 Object {
                   "ref": Object {
                     "searchResult": Object {
+                      "id": "8433",
                       "subtitle": "1996, США, Комедии",
                       "title": "Доктор Кто",
                       "url": "https://rezka.ag/films/comedy/8433-doktor-kto-1996.html",
@@ -38,6 +40,7 @@ describe('integration', () => {
                 Object {
                   "ref": Object {
                     "searchResult": Object {
+                      "id": "11694",
                       "subtitle": "1963-1989, Великобритания, Приключения",
                       "title": "Доктор Кто / Классический Доктор Кто",
                       "url": "https://rezka.ag/series/adventures/11694-doktor-kto-klassicheskiy-doktor-kto.html",
@@ -50,6 +53,7 @@ describe('integration', () => {
                 Object {
                   "ref": Object {
                     "searchResult": Object {
+                      "id": "28853",
                       "subtitle": "2017, Великобритания, Фантастика",
                       "title": "Доктор Кто: Шада",
                       "url": "https://rezka.ag/films/fiction/28853-doktor-kto-shada-2017.html",
@@ -62,6 +66,7 @@ describe('integration', () => {
                 Object {
                   "ref": Object {
                     "searchResult": Object {
+                      "id": "35880",
                       "subtitle": "2020, Великобритания, Приключения",
                       "title": "Доктор Кто: Безликие",
                       "url": "https://rezka.ag/cartoons/adventures/35880-doktor-kto-bezlikie-2020.html",
