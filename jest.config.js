@@ -1,4 +1,3 @@
-process.env.HTTP_INSPECTOR = 'ui';
 require('http-inspector/inject');
 
 // For a detailed explanation regarding each configuration property, visit:
