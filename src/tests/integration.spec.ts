@@ -3,7 +3,7 @@ import { MediaFolder, MediaReference } from '../types';
 import { stripProperties } from './utils';
 
 describe('integration', () => {
-    it('should load series with multiple translators', async () => {
+    xit('should load series with multiple translators', async () => {
         const client = new HdrezkaClientImpl();
 
         const searchResultsFolder = await client.getSearchResults('доктор кто');
@@ -154,7 +154,7 @@ describe('integration', () => {
         `);
     });
 
-    it('should load series with no translators', async () => {
+    xit('should load series with no translators', async () => {
         const client = new HdrezkaClientImpl();
 
         const searchResultsFolder = await client.getSearchResults(
@@ -332,7 +332,7 @@ describe('integration', () => {
         `);
     });
 
-    it('should load movie with multiple translators', async () => {
+    xit('should load movie with multiple translators', async () => {
         const client = new HdrezkaClientImpl();
 
         const searchResultsFolder = await client.getSearchResults(

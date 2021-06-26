@@ -2,8 +2,8 @@ import { HdrezkaClientImpl } from '../HdrezkaClientImpl';
 import { Media, MediaFolder, MediaReference, MediaStream } from '../types';
 import { stripProperties } from './utils';
 
-describe('integration edge cases', () => {
-    it('should load series with one translator loaded by default', async () => {
+xdescribe('integration edge cases', () => {
+    xit('should load series with one translator loaded by default', async () => {
         const client = new HdrezkaClientImpl();
 
         const searchResultsFolder = await client.getSearchResults('аватар');
