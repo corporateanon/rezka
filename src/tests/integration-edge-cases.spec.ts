@@ -2,7 +2,7 @@ import { HdrezkaClientImpl } from '../HdrezkaClientImpl';
 import { MediaFolder, MediaReference } from '../types';
 
 describe('integration edge cases', () => {
-    xit('should load series with one translator loaded by default', async () => {
+    it('should load series with one translator loaded by default', async () => {
         const client = new HdrezkaClientImpl();
 
         const searchResultsFolder = await client.getSearchResults(
