@@ -28,7 +28,7 @@ export class HdrezkaClientImpl implements HdrezkaClient {
 
     constructor() {
         this.http = Axios.create({
-            baseURL: 'https://rezka.ag',
+            baseURL: 'https://hdrezka.co',
         });
     }
 
