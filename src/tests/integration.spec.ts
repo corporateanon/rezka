@@ -1,4 +1,3 @@
-require('http-inspector/inject');
 import { MediaFolder, MediaReference } from '../types';
 import { createClient, stripProperties } from './utils';
 
