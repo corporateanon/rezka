@@ -1,10 +1,9 @@
-import { HdrezkaClientImpl } from '../HdrezkaClientImpl';
 import { MediaFolder, MediaReference } from '../types';
-import { stripProperties } from './utils';
+import { createClient, stripProperties } from './utils';
 
 describe('integration', () => {
     it('should load series with multiple translators', async () => {
-        const client = new HdrezkaClientImpl();
+        const client = createClient();
 
         const searchResultsFolder = await client.getSearchResults('доктор кто');
         expect(searchResultsFolder.children[0].type).toEqual('MediaReference');
@@ -155,7 +154,7 @@ describe('integration', () => {
     });
 
     it('should load series with no translators', async () => {
-        const client = new HdrezkaClientImpl();
+        const client = createClient();
 
         const searchResultsFolder = await client.getSearchResults(
             'место встречи изменить нельзя'
@@ -289,7 +288,7 @@ describe('integration', () => {
     });
 
     it('should load movie with no translators', async () => {
-        const client = new HdrezkaClientImpl();
+        const client = createClient();
 
         const searchResultsFolder = await client.getSearchResults(
             'иван васильевич меняет профессию'
@@ -333,7 +332,7 @@ describe('integration', () => {
     });
 
     it('should load movie with multiple translators', async () => {
-        const client = new HdrezkaClientImpl();
+        const client = createClient();
 
         const searchResultsFolder = await client.getSearchResults(
             'Терминатор 2: Судный день'

@@ -22,14 +22,31 @@ import {
     ReferenceTranslator,
 } from './types';
 import { parseStreamMap } from './utils';
+import { SocksProxyAgent } from 'socks-proxy-agent';
+
+interface HdrezkaClientImplOptions {
+    //SOCKSv5 proxy, for example: "socks5://example.com:9150"
+    proxy?: string;
+}
 
 export class HdrezkaClientImpl implements HdrezkaClient {
     protected http: AxiosInstance;
 
-    constructor() {
-        this.http = Axios.create({
-            baseURL: 'http://hdrezka.co',
-        });
+    constructor(private options: HdrezkaClientImplOptions = {}) {
+        const baseURL = 'http://hdrezka.co';
+
+        if (this.options?.proxy) {
+            const proxyAgent = new SocksProxyAgent(this.options.proxy);
+            this.http = Axios.create({
+                baseURL,
+                httpAgent: proxyAgent,
+                httpsAgent: proxyAgent,
+            });
+        } else {
+            this.http = Axios.create({
+                baseURL,
+            });
+        }
     }
 
     async getSearchResults(query: string): Promise<MediaFolder> {

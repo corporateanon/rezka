@@ -1,3 +1,5 @@
+import { HdrezkaClientImpl } from '../HdrezkaClientImpl';
+
 const flatten = require('keypather/flatten');
 const expand = require('keypather/expand');
 const wild = require('wild');
@@ -15,4 +17,12 @@ export function stripProperties(
         }
     }
     return expand(flat);
+}
+
+export function createClient() {
+    const SOCKS_PROXY = process.env.SOCKS_PROXY;
+    if (SOCKS_PROXY) {
+        return new HdrezkaClientImpl({ proxy: SOCKS_PROXY });
+    }
+    return new HdrezkaClientImpl();
 }

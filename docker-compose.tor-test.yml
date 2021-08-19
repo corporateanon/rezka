@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  tor:
+    image: peterdavehello/tor-socks-proxy:latest
+    ports:
+      - target: 9150
+        published: 19150
